@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="035305fd-e1cc-46fd-b377-90593a2b1c63" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<anypoint-mq:config name="Anypoint_MQ_Config" doc:name="Anypoint MQ Config" doc:id="4748d467-53a5-4fa4-a1ee-7a65ae9e3e10" >
+		<anypoint-mq:connection url="https://mq-ap-northeast-1.anypoint.mulesoft.com/api/v1" clientId="// TODO : Input your MQ client id" clientSecret="// TODO : Input your MQ client secret" />
+	</anypoint-mq:config>
+	<flow name="hellomule-mq-demoFlow" doc:id="6a33cc2d-640a-46ac-987e-f518b419ddb9" >
+		<http:listener doc:name="/mq/{messageId}" doc:id="e40bb765-5c0f-4921-a27c-f584f28786b4" path="/mq/{messageId}" config-ref="HTTP_Listener_config"/>
+		<anypoint-mq:publish doc:name="Publish" doc:id="fc50993f-26ec-4090-9c65-f710952cb598" config-ref="Anypoint_MQ_Config" destination="hellomule-queue-stg"/>
+	</flow>
+	<flow name="hellomule-mq-demoFlow2" doc:id="dbfa1c1f-4039-4742-810a-f8152b86cced" >
+		<anypoint-mq:subscriber doc:name="Subscriber" doc:id="d2ad9443-0f7f-4366-abbf-30b4918250da" config-ref="Anypoint_MQ_Config" destination="hellomule-queue-stg"/>
+		<logger level="INFO" doc:name="Logger" doc:id="1fb60946-2b41-44e6-a1b7-4c4da0687ce1" message="#[attributes]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="b00c2cc8-2f7d-4fd3-8176-63093417728a" message="#[payload]" />
+	</flow>
+</mule>
